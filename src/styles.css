@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --font-sans: "Segoe UI", "Noto Sans", Roboto, ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Palatino Linotype", Palatino, "Iowan Old Style", "Times New Roman", serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  --color-background: #f3efe4;
+  --color-foreground: #1c1915;
+  --color-card: #fffdf7;
+  --color-card-foreground: #1c1915;
+  --color-popover: #fffdf7;
+  --color-popover-foreground: #1c1915;
+  --color-primary: #0b5f4b;
+  --color-primary-foreground: #f4faf7;
+  --color-secondary: #ebe4d4;
+  --color-secondary-foreground: #1c1915;
+  --color-muted: #ebe4d4;
+  --color-muted-foreground: #6f675c;
+  --color-accent: #dceee7;
+  --color-accent-foreground: #0b5f4b;
+  --color-destructive: #9b2c2c;
+  --color-destructive-foreground: #fff8f7;
+  --color-border: #ddd4c4;
+  --color-input: #ddd4c4;
+  --color-ring: #0b5f4b;
+  --color-paper: #fffdf7;
+  --color-ink: #1c1915;
+  --color-faint: #948b7e;
+  --color-teal: #0b5f4b;
+  --color-teal-dim: #094a3b;
+  --color-warn: #9a6700;
+  --color-ok: #1f6b45;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  input, select, textarea {
+    font: inherit;
+  }
+}
+
+@keyframes cbhi-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.cbhi-enter {
+  animation: cbhi-fade-up 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
