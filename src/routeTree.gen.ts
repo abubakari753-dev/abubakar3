@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InstallRouteImport } from './routes/install'
 import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as HouseholdsIndexRouteImport } from './routes/households/index'
@@ -19,6 +20,11 @@ import { Route as HouseholdsNewRouteImport } from './routes/households/new'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstallRoute = InstallRouteImport.update({
+  id: '/install',
+  path: '/install',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocationsRoute = LocationsRouteImport.update({
@@ -49,6 +55,7 @@ const HouseholdsNewRoute = HouseholdsNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/install': typeof InstallRoute
   '/locations': typeof LocationsRoute
   '/settings': typeof SettingsRoute
   '/households/$id': typeof HouseholdsIdRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/install': typeof InstallRoute
   '/locations': typeof LocationsRoute
   '/settings': typeof SettingsRoute
   '/households/$id': typeof HouseholdsIdRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/install': typeof InstallRoute
   '/locations': typeof LocationsRoute
   '/settings': typeof SettingsRoute
   '/households/$id': typeof HouseholdsIdRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/install'
     | '/locations'
     | '/settings'
     | '/households/$id'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/install'
     | '/locations'
     | '/settings'
     | '/households/$id'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/install'
     | '/locations'
     | '/settings'
     | '/households/$id'
@@ -101,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  InstallRoute: typeof InstallRoute
   LocationsRoute: typeof LocationsRoute
   SettingsRoute: typeof SettingsRoute
   HouseholdsIdRoute: typeof HouseholdsIdRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/install': {
+      id: '/install'
+      path: '/install'
+      fullPath: '/install'
+      preLoaderRoute: typeof InstallRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/locations': {
@@ -157,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  InstallRoute: InstallRoute,
   LocationsRoute: LocationsRoute,
   SettingsRoute: SettingsRoute,
   HouseholdsIdRoute: HouseholdsIdRoute,

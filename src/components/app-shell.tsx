@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Users, MapPinned, Settings, Plus } from "lucide-react";
+import { Home, Users, MapPinned, Settings, Plus, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/cbhi/constants";
 import { SearchOmni } from "./search-omni";
+import { isStandalone } from "@/lib/cbhi/install";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: Home },
@@ -14,6 +15,10 @@ const NAV = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [installed, setInstalled] = useState(false);
+  useEffect(() => {
+    setInstalled(isStandalone());
+  }, []);
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
@@ -40,6 +45,15 @@ export function AppShell({ children }: { children: ReactNode }) {
               <SearchOmni tone="header" />
             </div>
           </div>
+          {!installed ? (
+            <Link
+              to="/install"
+              className="ml-auto flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-foreground/10 text-primary-foreground md:hidden"
+              aria-label="Install on this phone"
+            >
+              <Smartphone className="size-5" />
+            </Link>
+          ) : null}
         </div>
       </header>
 
@@ -69,6 +83,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Plus className="size-4" />
             New household
           </Link>
+          {!installed ? (
+            <Link
+              to="/install"
+              className="flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <Smartphone className="size-4" />
+              Install app
+            </Link>
+          ) : null}
         </aside>
 
         <main className="min-w-0 flex-1 px-4 pt-4 pb-24 md:px-6 md:pt-6 md:pb-10">{children}</main>

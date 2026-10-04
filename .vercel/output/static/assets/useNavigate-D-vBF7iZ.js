@@ -1,1 +1,0 @@
-import{I as e,N as t}from"./input-BVHimEik.js";import{t as n}from"./useRouter-TVjV9yE7.js";var r=e(t(),1);function i(e){let t=n();return r.useCallback(n=>t.navigate({...n,from:n.from??e?.from}),[e?.from,t])}export{i as t};

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ensureSeededLocations } from "@/lib/cbhi/db";
 import { loadDemoRegister } from "@/lib/cbhi/demo";
+import { requestPersistentStorage } from "@/lib/cbhi/install";
 
 export function CbhiReady({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
@@ -11,8 +12,9 @@ export function CbhiReady({ children }: { children: ReactNode }) {
     (async () => {
       try {
         await ensureSeededLocations();
-        await loadDemoRegister();
+        void requestPersistentStorage();
         if (!cancelled) setReady(true);
+        void loadDemoRegister();
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Could not open the local register.");
       }

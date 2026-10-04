@@ -16,6 +16,7 @@ import { dashboardStats, emptyStats, householdViews } from "@/lib/cbhi/queries";
 import { SLIDING_SCALE_META } from "@/lib/cbhi/constants";
 import { formatBirr } from "@/lib/utils";
 import { SearchOmni } from "@/components/search-omni";
+import { InstallBanner } from "@/components/install-host";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScaleBadge, StatusBadge } from "@/components/scale-badge";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,7 @@ function Dashboard() {
       <div className="md:hidden">
         <SearchOmni />
       </div>
+      <InstallBanner />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-medium tracking-wide text-primary uppercase">Shinile Woreda register</p>

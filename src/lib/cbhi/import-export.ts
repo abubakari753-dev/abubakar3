@@ -424,7 +424,42 @@ export async function exportCsv(): Promise<{ blob: Blob; filename: string }> {
   };
 }
 
-export function downloadBlob(blob: Blob, filename: string) {
+export async function downloadBlob(blob: Blob, filename: string): Promise<{ savedAs: string; picked: boolean }> {
+  const picker = (
+    window as Window & {
+      showSaveFilePicker?: (opts: {
+        suggestedName: string;
+        types?: { description: string; accept: Record<string, string[]> }[];
+      }) => Promise<{
+        name: string;
+        createWritable: () => Promise<{ write: (data: Blob) => Promise<void>; close: () => Promise<void> }>;
+      }>;
+    }
+  ).showSaveFilePicker;
+
+  if (typeof picker === "function") {
+    try {
+      const ext = filename.includes(".") ? `.${filename.split(".").pop()}` : "";
+      const handle = await picker({
+        suggestedName: filename,
+        types: [
+          {
+            description: "Shinile CBHI file",
+            accept: { [blob.type || "application/octet-stream"]: [ext || ".bin"] },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return { savedAs: handle.name || filename, picked: true };
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        return { savedAs: filename, picked: false };
+      }
+    }
+  }
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -434,6 +469,7 @@ export function downloadBlob(blob: Blob, filename: string) {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return { savedAs: filename, picked: false };
 }
 
 export async function suggestHouseholdCode(

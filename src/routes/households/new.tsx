@@ -217,7 +217,7 @@ function NewHousehold() {
               <Input inputMode="numeric" placeholder="YYYY" value={enYear} onChange={(e) => setEnYear(e.target.value)} />
             </div>
           </Field>
-          <Field label="Household CBHI ID" hint={`${AMHARIC.householdId} · auto from kebele + scale`} className="sm:col-span-2">
+          <Field label="Household CBHI ID" hint={`${AMHARIC.householdId} · auto-generated from kebele + scale, you can still edit`} className="sm:col-span-2">
             <Input value={code} onChange={(e) => setCode(e.target.value)} className="font-mono" required />
           </Field>
           <Field label="Head National ID (FAN / FIN)" hint={AMHARIC.fan} className="sm:col-span-2">

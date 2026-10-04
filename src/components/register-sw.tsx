@@ -5,7 +5,7 @@ export function RegisterServiceWorker() {
     if (!import.meta.env.PROD) return;
     if (!("serviceWorker" in navigator)) return;
     const url = "/sw.js";
-    navigator.serviceWorker.register(url).catch(() => {
+    navigator.serviceWorker.register(url, { scope: "/" }).catch(() => {
       /* offline install is best-effort */
     });
   }, []);

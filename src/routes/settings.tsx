@@ -1,13 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { toast } from "sonner";
-import { Download, Smartphone, Upload } from "lucide-react";
+import { Archive, Download, Smartphone, Upload } from "lucide-react";
 import { getDb, getGeo, setGeo, wipeRegister } from "@/lib/cbhi/db";
 import { loadDemoRegister } from "@/lib/cbhi/demo";
 import { downloadBlob, exportCsv, exportWorkbook, importWorkbook } from "@/lib/cbhi/import-export";
+import { exportBackup, importBackup } from "@/lib/cbhi/backup";
 import { matchPhotoFilename, saveMemberPhoto } from "@/lib/cbhi/photos";
 import { DEFAULT_GEO } from "@/lib/cbhi/constants";
+import { useInstallUi } from "@/components/install-host";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, Input, NativeSelect } from "@/components/ui/field";
@@ -31,7 +33,7 @@ function SettingsPage() {
   const [geo, setGeoState] = useState<GeoSettings>(DEFAULT_GEO);
   const [storage, setStorage] = useState<string>("Calculating…");
   const [importing, setImporting] = useState<string | null>(null);
-  const [installEvent, setInstallEvent] = useState<{ prompt: () => Promise<void> } | null>(null);
+  const { standalone, canPrompt, platform, prompt } = useInstallUi();
 
   useEffect(() => {
     void getGeo().then(setGeoState);
@@ -46,16 +48,6 @@ function SettingsPage() {
       }
     })();
   }, [counts?.photos, counts?.members]);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      const ev = e as Event & { prompt: () => Promise<void> };
-      setInstallEvent(ev);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
 
   async function onImportFile(file: File, mode: "merge" | "replace") {
     setImporting("Reading file…");
@@ -93,6 +85,13 @@ function SettingsPage() {
       matched += 1;
     }
     toast.success(`Attached ${matched} of ${files.length} photos`);
+  }
+
+  async function saveExport(kind: "xlsx" | "csv") {
+    const { blob, filename } = kind === "xlsx" ? await exportWorkbook() : await exportCsv();
+    const result = await downloadBlob(blob, filename);
+    if (result.picked) toast.success(`Saved ${result.savedAs} to the folder you chose`);
+    else toast.success(`Saved ${filename} to this device’s Downloads folder`);
   }
 
   return (
@@ -133,28 +132,35 @@ function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Smartphone className="size-4" />
-            Install for Android & Windows
+            Install on Android & Windows
           </CardTitle>
           <CardDescription>
-            Add this registrar to the home screen. It then opens like an app and keeps working offline.
+            {standalone
+              ? "This copy is already installed. The register stays in this device’s storage."
+              : platform === "android"
+                ? "Add Shinile CBHI to the Android home screen so it opens like a phone app, even offline."
+                : "Install on this computer or phone. After install it works without internet."}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground">
-          {installEvent ? (
-            <Button
-              onClick={async () => {
-                await installEvent.prompt();
-                setInstallEvent(null);
-              }}
-            >
-              Install on this device
-            </Button>
+        <CardContent className="flex flex-col gap-3">
+          {standalone ? (
+            <p className="text-sm text-muted-foreground">You are using the installed app.</p>
           ) : (
-            <ul className="list-disc space-y-1 pl-4">
-              <li>Android Chrome: menu → Add to Home screen / Install app.</li>
-              <li>Windows Edge or Chrome: install icon in the address bar, or menu → Install Shinile CBHI.</li>
-              <li>After install, open from the icon. The register stays in this device’s storage.</li>
-            </ul>
+            <div className="flex flex-wrap gap-2">
+              {canPrompt ? (
+                <Button
+                  onClick={async () => {
+                    const result = await prompt();
+                    if (result === "accepted") toast.success("Installed on this device");
+                  }}
+                >
+                  Install on this device
+                </Button>
+              ) : null}
+              <Button variant={canPrompt ? "outline" : "default"} asChild>
+                <Link to="/install">How to install on a phone</Link>
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -264,29 +270,58 @@ function SettingsPage() {
             Export
           </CardTitle>
           <CardDescription>
-            Files download to this device (Downloads folder on Windows, Files app on Android).
+            On Windows, Chrome/Edge lets you pick the folder. On Android the file is saved in Downloads, then you can move it in the Files app.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          <Button
-            onClick={async () => {
-              const { blob, filename } = await exportWorkbook();
-              downloadBlob(blob, filename);
-              toast.success(`Saved ${filename}`);
-            }}
-          >
-            Export Excel (.xlsx)
-          </Button>
-          <Button
-            variant="outline"
-            onClick={async () => {
-              const { blob, filename } = await exportCsv();
-              downloadBlob(blob, filename);
-              toast.success(`Saved ${filename}`);
-            }}
-          >
+          <Button onClick={() => void saveExport("xlsx")}>Export Excel (.xlsx)</Button>
+          <Button variant="outline" onClick={() => void saveExport("csv")}>
             Export CSV
           </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Archive className="size-4" />
+            Backup this device
+          </CardTitle>
+          <CardDescription>
+            Full local copy of households, members, kebeles and photos. Restore it on the same phone or another device that has Shinile CBHI installed.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <Button
+            variant="secondary"
+            onClick={async () => {
+              const { blob, filename } = await exportBackup();
+              const result = await downloadBlob(blob, filename);
+              toast.success(result.picked ? `Backup saved as ${result.savedAs}` : `Backup saved: ${filename}`);
+            }}
+          >
+            Save backup file
+          </Button>
+          <label className="flex min-h-11 cursor-pointer items-center justify-center rounded-md border border-dashed border-border bg-muted/50 px-3 text-sm">
+            Restore from backup
+            <input
+              type="file"
+              accept="application/json,.json"
+              className="sr-only"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                if (!confirm("Replace the register on this device with the backup file?")) return;
+                try {
+                  const result = await importBackup(await file.arrayBuffer());
+                  toast.success(`Restored ${result.households} households, ${result.members} members`);
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Restore failed");
+                }
+              }}
+            />
+          </label>
         </CardContent>
       </Card>
 

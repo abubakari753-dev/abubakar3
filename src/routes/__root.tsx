@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-r
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { RegisterServiceWorker } from "@/components/register-sw";
+import { InstallHost } from "@/components/install-host";
 import { CbhiReady } from "@/components/cbhi-ready";
 import { AppShell } from "@/components/app-shell";
 import { Toaster } from "sonner";
@@ -22,12 +23,15 @@ export const Route = createRootRoute({
       },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: APP_NAME },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/icon-192.png" },
     ],
   }),
   component: RootLayout,
@@ -49,6 +53,7 @@ function RootLayout() {
           </CbhiReady>
         </AuthProvider>
         <Toaster position="top-center" richColors closeButton />
+        <InstallHost />
         <RegisterServiceWorker />
         <Scripts />
       </body>

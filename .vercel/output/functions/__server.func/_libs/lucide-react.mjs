@@ -82,6 +82,30 @@ var createLucideIcon = (iconName, iconNode) => {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var Archive = createLucideIcon("archive", [
+	["rect", {
+		width: "20",
+		height: "5",
+		x: "2",
+		y: "3",
+		rx: "1",
+		key: "1wp1u1"
+	}],
+	["path", {
+		d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8",
+		key: "1s80jp"
+	}],
+	["path", {
+		d: "M10 12h4",
+		key: "a56b0p"
+	}]
+]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var ArrowLeft = createLucideIcon("arrow-left", [["path", {
 	d: "m12 19-7-7 7-7",
 	key: "1l729n"
@@ -103,6 +127,16 @@ var Camera = createLucideIcon("camera", [["path", {
 	cy: "13",
 	r: "3",
 	key: "1vg3eu"
+}]]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var Check = createLucideIcon("check", [["path", {
+	d: "M20 6 9 17l-5-5",
+	key: "1gmf2c"
 }]]);
 /**
 * @license lucide-react v0.510.0 - ISC
@@ -217,6 +251,36 @@ var MapPinned = createLucideIcon("map-pinned", [
 	["path", {
 		d: "M8.714 14h-3.71a1 1 0 0 0-.948.683l-2.004 6A1 1 0 0 0 3 22h18a1 1 0 0 0 .948-1.316l-2-6a1 1 0 0 0-.949-.684h-3.712",
 		key: "q8zwxj"
+	}]
+]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var Monitor = createLucideIcon("monitor", [
+	["rect", {
+		width: "20",
+		height: "14",
+		x: "2",
+		y: "3",
+		rx: "2",
+		key: "48i651"
+	}],
+	["line", {
+		x1: "8",
+		x2: "16",
+		y1: "21",
+		y2: "21",
+		key: "1svkeh"
+	}],
+	["line", {
+		x1: "12",
+		x2: "12",
+		y1: "17",
+		y2: "21",
+		key: "vw1qmm"
 	}]
 ]);
 /**
@@ -436,4 +500,4 @@ var X = createLucideIcon("x", [["path", {
 	key: "d8bk6v"
 }]]);
 //#endregion
-export { Camera as _, TriangleAlert as a, Settings as c, Plus as d, MapPinned as f, ChevronRight as g, Download as h, Upload as i, Search as l, House as m, Users as n, Trash2 as o, Landmark as p, User as r, Smartphone as s, X as t, RefreshCw as u, ArrowLeft as v };
+export { ChevronRight as _, TriangleAlert as a, ArrowLeft as b, Settings as c, Plus as d, Monitor as f, Download as g, House as h, Upload as i, Search as l, Landmark as m, Users as n, Trash2 as o, MapPinned as p, User as r, Smartphone as s, X as t, RefreshCw as u, Check as v, Archive as x, Camera as y };
